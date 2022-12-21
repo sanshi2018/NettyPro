@@ -1,0 +1,11 @@
+target/
+target/classes
+*.class
+target/classes/com/atguigu/nio/BasicBuffer.class
+target/classes/com/atguigu/nio/EX_17_NIOByteBufferPutGet.class
+target/classes/com/atguigu/nio/EX_17_ReadOnlyBuffer.class
+target/classes/com/atguigu/nio/EX_19_ScatteringAndGatheringTest.class
+target/classes/com/atguigu/nio/NIOFileChannel01.class
+target/classes/com/atguigu/nio/NIOFileChannel02.class
+target/classes/com/atguigu/nio/NIOFileChannel03.class
+target/classes/com/atguigu/nio/Selector/EX_24_NIOServer.class
