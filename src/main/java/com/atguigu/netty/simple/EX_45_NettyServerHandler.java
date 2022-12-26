@@ -26,6 +26,10 @@ public class EX_45_NettyServerHandler extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         // 比如这里有一个非常耗时的业务-> 异步执行 -> 提交该 channel 对应的 NIOEventLoop 的 taskQueue 中
         // 解决方案1 用户程序自定义的普通任务
+        /**
+         * 这个任务是在一个线程中执行的, 但是这个线程是在 NIOEventLoop 的线程中执行的
+         * 也就是说, 这个任务是在 NIOEventLoop 的线程中执行的, 使用Netty处理workerGroup的线程，进而导致netty变慢
+         */
         ctx.channel().eventLoop().execute(new Runnable() {
             @Override
             public void run() {
