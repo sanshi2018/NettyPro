@@ -26,12 +26,12 @@ public class BoomRpcInvoker implements InvocationHandler {
     }
 
 
-    /*
-        远程调用的核心方法
+    /**
+     *  消费者远程调用的核心方法
      */
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        // 1 - 封装请求对象,用于发送到另一段
+        // 1 - 封装请求对象,用于发送到另一端
         //就是要告诉另一端你要调用哪个类的哪个方法
         RpcRequest rpcRequest = new RpcRequest();
         rpcRequest.setClassName(method.getDeclaringClass().getName());
@@ -41,6 +41,7 @@ public class BoomRpcInvoker implements InvocationHandler {
 
         // 2- 获得服务serverName的服务提供者列表
         List<String> providerList = RpcCacheHolder.SERVER_PROVIDERS.get(serverName);
+        // 容错处理
         if (providerList == null || providerList.size() < 1 ){
             // 另一段压根没提供服务的机器存在,肯定无法远程调用直接降级处理
             return Callbacker.Builder(rpcRequest)

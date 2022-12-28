@@ -2,6 +2,8 @@ package burukeyou.common.protocol;
 
 
 import burukeyou.common.entity.enums.RequestTypeEnum;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Arrays;
 
@@ -15,72 +17,42 @@ public class RpcRequest extends RpcProtocol  {
      *
      *      不过这里实现是基于一个请求一个连接后就断开的方法处理暂时不会有这个问题
      */
+    @Getter
+    @Setter
     private String requestId;
 
     /**
      *  调用类名
      */
+    @Getter
+    @Setter
     private String className;
 
     /**
      *  调用方法名
      */
+    @Getter
+    @Setter
     private String methodName;
 
     /**
      *  方法参数类型
      */
+    @Getter
+    @Setter
     private Class<?>[] parameterTypes;
 
     /**
      *  方法参数
      */
+    @Getter
+    @Setter
     private Object[] parameters;
 
 
     @Override
     public Byte getRequestType() {
         return RequestTypeEnum.REQUEST.getType();
-    }
-
-    public String getRequestId() {
-        return requestId;
-    }
-
-    public void setRequestId(String requestId) {
-        this.requestId = requestId;
-    }
-
-    public String getClassName() {
-        return className;
-    }
-
-    public void setClassName(String className) {
-        this.className = className;
-    }
-
-    public String getMethodName() {
-        return methodName;
-    }
-
-    public void setMethodName(String methodName) {
-        this.methodName = methodName;
-    }
-
-    public Class<?>[] getParameterTypes() {
-        return parameterTypes;
-    }
-
-    public void setParameterTypes(Class<?>[] parameterTypes) {
-        this.parameterTypes = parameterTypes;
-    }
-
-    public Object[] getParameters() {
-        return parameters;
-    }
-
-    public void setParameters(Object[] parameters) {
-        this.parameters = parameters;
     }
 
 

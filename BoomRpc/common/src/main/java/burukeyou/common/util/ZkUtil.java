@@ -2,6 +2,7 @@ package burukeyou.common.util;
 
 import burukeyou.common.config.BoomRpcProperties;
 import burukeyou.common.entity.Constant;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.framework.recipes.cache.PathChildrenCache;
@@ -22,6 +23,7 @@ import java.util.concurrent.locks.ReentrantLock;
 /**
  *      服务注册和服务发现
  */
+@Slf4j
 @Component
 public class ZkUtil  {
 
@@ -67,9 +69,13 @@ public class ZkUtil  {
 
         String path = null;
         try {
+            // 创建临时节点
             path =  zkClient.create().creatingParentsIfNeeded()
+                    // 节点类型 临时节点
                     .withMode(CreateMode.EPHEMERAL)
+                    // 节点权限 world:anyone:cdrwa
                     .withACL(ZooDefs.Ids.OPEN_ACL_UNSAFE)
+                    // 节点路径 /服务名/服务提供者地址
                     .forPath(nodePath, nodeData.getBytes());
         }catch (KeeperException.NodeExistsException e){
             logger.error("NodeExistsException ----服务注册失败，该服务器节点 {} 已经注册,请修改",e.getPath());
@@ -91,8 +97,11 @@ public class ZkUtil  {
 
         List<String> serverList = null;
         try {
+            // 获取服务节点下的所有子节点
              PathChildrenCache childrenCache = new PathChildrenCache(zkClient, "/" + serverName,true);
+             // 启动监听
             childrenCache.start(PathChildrenCache.StartMode.POST_INITIALIZED_EVENT);
+            // 获取子节点列表
             addListener(childrenCache,serverName);
         } catch (Exception e) {
             e.printStackTrace();
@@ -106,7 +115,7 @@ public class ZkUtil  {
             if(event.getType().equals(PathChildrenCacheEvent.Type.CHILD_ADDED)){
                 String path = event.getData().getPath();
                 String host = path.substring(path.lastIndexOf("/") + 1, path.length());
-                System.out.println("服务器上线:" + path);
+                log.info("服务器上线:" + path);
 
                 try {
                     // 更新本地服务提供者缓存

@@ -6,6 +6,7 @@ import burukeyou.discover.boot.ServerRegisterBoot;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -13,6 +14,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+@Slf4j
 @ChannelHandler.Sharable
 public class ServerRequesthandler extends SimpleChannelInboundHandler<RpcRequest> {
 
@@ -26,7 +28,7 @@ public class ServerRequesthandler extends SimpleChannelInboundHandler<RpcRequest
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, RpcRequest msg) throws Exception {
         requestThreadPool.submit(() -> {
-            System.out.println(msg);
+            log.info("receive request: {}",msg);
 
            /* try {
                 Thread.sleep(30000); // 模拟请求超时
@@ -44,13 +46,13 @@ public class ServerRequesthandler extends SimpleChannelInboundHandler<RpcRequest
                 e.printStackTrace();
                 rpcResponse.setException(e);
             }
-            System.out.println(rpcResponse);
+            log.info("send response: {}",rpcResponse);
             ctx.pipeline().writeAndFlush(rpcResponse);
         });
     }
 
     /*
-        远程调用的核心方法
+        生产者收到消费者发来的消息本地调用核心实现如下
      */
     private Object handleRequest(RpcRequest request) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
         //获得要调用哪个类

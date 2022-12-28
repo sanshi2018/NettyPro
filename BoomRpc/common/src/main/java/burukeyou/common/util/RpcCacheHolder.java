@@ -19,12 +19,13 @@ public class RpcCacheHolder {
 
 
     /**
+     *      客户端声明的自己用到的服务
      *      客户端订阅的服务列表
      */
     public static Set<String> SUBSCRIBE_SERVICE = new TreeSet<>();
 
     /**
-     *    客户端订阅的服务的提供列表
+     *    客户端订阅的服务的提供列表，由zk来提供服务list
      *          key - 服务名
      *          value - 对应的提供者服务器列表
      */

@@ -21,8 +21,14 @@ import java.util.concurrent.TimeUnit;
 public class RpcClient extends SimpleChannelInboundHandler<RpcResponse> {
 
     private final Logger logger = LoggerFactory.getLogger(RpcClient.class);
-    private static final int MAX_RETRY_TIMES = 2;  // 连接失败重连接次数
-    private static final int MAX_RETRY_SEND_TIMES = 3; // 请求超时重发次数
+    /**
+     * 连接失败重连接次数
+     */
+    private static final int MAX_RETRY_TIMES = 2;
+    /**
+     * 请求超时重发次数
+     */
+    private static final int MAX_RETRY_SEND_TIMES = 3;
 
     private Bootstrap bootstrap;
     private NioEventLoopGroup bossGroup;
@@ -76,6 +82,21 @@ public class RpcClient extends SimpleChannelInboundHandler<RpcResponse> {
         try {
             connect(MAX_RETRY_TIMES);
 
+            // 使用netty异步回调的方式，等待连接成功
+//            countDownLatch.await();
+//
+//            if (providerChannel != null) {
+//                providerChannel.writeAndFlush(rpcRequest).addListener(future -> {
+//                    if (future.isSuccess()) {
+//                        logger.info("客户端发送消息：{}", rpcRequest);
+//                    } else {
+//                        logger.error("发送消息时有错误发生：", future.cause());
+//                    }
+//                });
+//            } else {
+//                logger.error("连接失败，无法发送消息");
+//            }
+
             boolean await = countDownLatch.await(3, TimeUnit.SECONDS);
             if (!await){
                 // 建立连接超时
@@ -91,7 +112,7 @@ public class RpcClient extends SimpleChannelInboundHandler<RpcResponse> {
     }
 
     private void send(int remainingTimes,RpcRequest rpcRequest) throws InterruptedException {
-        System.out.println("第"+((MAX_RETRY_SEND_TIMES - remainingTimes)+1)+"次发送: ");
+        logger.info("第"+((MAX_RETRY_SEND_TIMES - remainingTimes)+1)+"次发送: ");
         if (remainingTimes <= 0){
             throw new RuntimeException("请求服务超时");
         }else {
